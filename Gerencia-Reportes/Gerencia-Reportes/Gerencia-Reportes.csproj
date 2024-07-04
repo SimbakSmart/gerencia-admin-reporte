@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Assets\window.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
@@ -132,6 +135,7 @@
     <Compile Include="Services\MessagesProvider.cs" />
     <Compile Include="Utils\GlobalMessages.cs" />
     <Compile Include="ViewModels\UC\CallsInQueuesUCViewModel.cs" />
+    <Compile Include="ViewModels\Windows\MainWindowViewModel.cs" />
     <Compile Include="Views\UC\CallsInQueuesUC.xaml.cs">
       <DependentUpon>CallsInQueuesUC.xaml</DependentUpon>
     </Compile>
@@ -210,9 +214,7 @@
     <Resource Include="Assets\systems.png" />
     <Resource Include="Assets\window.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Windows\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

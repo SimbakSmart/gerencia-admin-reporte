@@ -5,8 +5,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gerencia_Reportes.Views.Windows"
         mc:Ignorable="d"
-        Title="SplashWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Style="{StaticResource MaterialDesignWindow}"
+        Title="SplashWindow" Height="450" Width="770"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="{x:Null}"
+        ContentRendered="Window_ContentRendered">
+
+
+
+    <md:Card
+        UniformCornerRadius="15"
+       md:ElevationAssist.Elevation="Dp5"
+        Margin="25">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400" />
+                <ColumnDefinition Width="370" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="50 0 0 0">
+
+                <WrapPanel>
+
+                    <Image Source="/Assets/smart-logo.png"
+                           HorizontalAlignment="Left"
+                          Stretch="Fill"
+                           Width="80" Height="100"/>
+
+
+                    <TextBlock Text="SMART SISTEMAS" 
+                               FontSize="28"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="15 0 0 0"/>
+
+                    <TextBlock Text="Espere un momento...."
+                                 FontSize="17" 
+                                FontWeight="SemiBold"
+                               HorizontalAlignment="Left"
+                               Margin="0 30 0 15"/>
+
+                    <ProgressBar x:Name="progressBar"
+                                Value="0"
+                                 Height="5"
+                                 Width="280"
+                                 IsIndeterminate="True"/>
+
+
+                </WrapPanel>
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="50" Height="320" Width="320">
+                <Image Source="/Assets/splash.png"  Height="300" Margin="10 0"/>
+
+
+            </StackPanel>
+
+
+        </Grid>
+
+
+    </md:Card>
 </Window>
+

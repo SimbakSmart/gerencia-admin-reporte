@@ -4,13 +4,53 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:uc="clr-namespace:Gerencia_Reportes.Views.UC"
+         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Gerencia_Reportes.Views.Windows"
+        xmlns:vm="clr-namespace:Gerencia_Reportes.ViewModels.Windows"
         mc:Ignorable="d"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+         Title="Reporteador de Epicor" 
+         Height="700" 
+         Width="900"
+         MinHeight="940"
+         MinWidth="1400" 
+         WindowStartupLocation="CenterScreen"
+         Closing="Window_Closing">
+
+
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+    
+    <StackPanel>
+        <StackPanel Grid.Row="0"
+ Orientation="Horizontal" 
+ HorizontalAlignment="Left">
+
+            <md:PackIcon Kind="WhiteBalanceSunny" 
+                 Height="45" Width="25"  
+                 HorizontalAlignment="Center" 
+                 Margin="15 0 7 0" />
+
+            <ToggleButton
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center" 
+        Margin="3 0"
+        IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
+        Command="{Binding ToggleThemeCommand}"/>
+
+            <md:PackIcon Kind="MoonWaxingCrescent" 
+                 Height="45" Width="25"  
+                 HorizontalAlignment="Center" 
+                 Margin="3 0"/>
+
+
+
+        </StackPanel>
+
         <StackPanel>
             <uc:CallsInQueuesUC />
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Window>

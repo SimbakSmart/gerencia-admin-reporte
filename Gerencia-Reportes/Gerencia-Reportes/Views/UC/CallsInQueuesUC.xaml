@@ -5,15 +5,274 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Gerencia_Reportes.Views.UC"
              xmlns:vm="clr-namespace:Gerencia_Reportes.ViewModels.UC"
+              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+              xmlns:ge="clr-namespace:SourceChord.GridExtra;assembly=GridExtra.Wpf"
+              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+              xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.DataContext>
         <vm:CallsInQueuesUCViewModel/>
     </UserControl.DataContext>
-    
-    <Grid>
 
-        <DataGrid ItemsSource="{Binding ItemList}" AutoGenerateColumns="True" Height="877" />
-    </Grid>
+
+    <md:DialogHost>
+        <Grid>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                <md:Card Padding="5" Margin="10"
+                       md:ElevationAssist.Elevation="Dp4">
+
+                    <ge:ResponsiveGrid>
+
+
+                        <Border ge:ResponsiveGrid.XS="12"  ge:ResponsiveGrid.SM="8" >
+                            <StackPanel Orientation="Horizontal">
+
+                                <ComboBox
+                             ItemsSource="{Binding QueuesFilter}"
+                             Width="300"
+                             md:HintAssist.Hint="Seleccionar queues"
+                             Padding="6"
+                             Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                    <ComboBox.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource ComboBoxItemStyle}" TargetType="ComboBoxItem"/>
+                                    </ComboBox.ItemContainerStyle>
+
+                                    <ComboBox.ItemTemplate >
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="5" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <!--Button Search-->
+                                <Button 
+                                  Command="{Binding SearchCommand}"
+                                  Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                                  ToolTip="Presinar para busqueda"
+                                  HorizontalAlignment="Center"
+                                  Margin="5">
+                                    <md:PackIcon Kind="Magnify" Width="25" Height="25" />
+                                </Button>
+
+                                <TextBox Text="{Binding SearchByNumber, UpdateSourceTrigger=PropertyChanged}"
+                                   Width="155"
+                                      MaxLength="15"
+                                     Padding="6"
+                                      md:HintAssist.Hint="Ingresar number.."
+                                      md:HintAssist.IsFloating="True" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                     HorizontalAlignment="Center"
+                                     Margin="5">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="KeyDown">
+                                            <cmd:EventToCommand Command="{Binding SearchByNumberKeyDownCommand}"
+                                     PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+
+
+                                <TextBox Text="{Binding SearchByAttribute, UpdateSourceTrigger=PropertyChanged}"
+                                Width="155"
+                                Padding="6"
+                                 MaxLength="27"
+                                 md:HintAssist.Hint="Ingresar attribute..."
+                                 md:HintAssist.IsFloating="True" 
+                                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                HorizontalAlignment="Center"
+                                Margin="5">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="KeyDown">
+                                            <cmd:EventToCommand Command="{Binding SearchByAttributeKeyDownCommand}"
+                                PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+
+
+                                <TextBox Text="{Binding ValueShortText, UpdateSourceTrigger=PropertyChanged}"
+                               Width="155"
+                               Padding="6"
+                               MaxLength="27"
+                                md:HintAssist.Hint="Ingresar value..."
+                                md:HintAssist.IsFloating="True" 
+                               Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                               HorizontalAlignment="Center"
+                               Margin="5">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="KeyDown">
+                                            <cmd:EventToCommand Command="{Binding SearchByValueKeyDownCommand}"
+                               PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+
+
+
+
+                                <Button 
+                               Command="{Binding RefreshCommand}" 
+                              Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                              ToolTip="Limpiar y recargar información"
+                              HorizontalAlignment="Center"
+                              Margin="5">
+                                    <md:PackIcon Kind="Broom" Width="25" Height="25" />
+                                </Button>
+
+                            </StackPanel>
+                        </Border>
+
+                        <Border ge:ResponsiveGrid.XS="12"  ge:ResponsiveGrid.SM="4" >
+
+                            <StackPanel HorizontalAlignment="Right"  Orientation="Horizontal">
+
+                                <Button
+                           Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                           ToolTip="Exportar a Excel"
+                             Command="{Binding ExcelReportCommand}"
+                          HorizontalAlignment="Center"
+                          Margin="5">
+                                    <md:PackIcon Kind="MicrosoftExcel" Width="28" Height="28" />
+                                </Button>
+
+                                <TextBlock Text="{Binding TotalRecords, StringFormat='Total Registros: {0:n0}'}" 
+                              Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                    HorizontalAlignment="Center"
+                                      Margin="5" />
+
+                            </StackPanel>
+
+                        </Border>
+
+
+                        <Border ge:ResponsiveGrid.XS="12"  ge:ResponsiveGrid.SM="12"  Margin="0 15">
+                            <StackPanel Margin="5">
+                                <DataGrid ItemsSource="{Binding ItemList}"  
+                                       SelectedItem="{Binding SelectedItem}"
+                                  AutoGenerateColumns="False" 
+                                   Height="855"
+                                   HorizontalAlignment="Stretch" 
+                                   VerticalAlignment="Stretch"
+                                   CanUserAddRows="False"
+                                   CanUserDeleteRows="False"
+                                   IsReadOnly="True"
+                                   EnableRowVirtualization="True"
+                                   EnableColumnVirtualization = "true">
+
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="{x:Type DataGridColumnHeader}"
+                                 BasedOn="{StaticResource CustomDataGridHeaderStyle}" />
+                                    </DataGrid.ColumnHeaderStyle>
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Support Call ID" Binding="{Binding SupporCallID}" Visibility="Hidden" />
+                                        <DataGridTextColumn Header="Number" Binding="{Binding Number}" />
+                                        <DataGridTextColumn Header="Types" Binding="{Binding Types}" />
+                                        <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" />
+                                        <DataGridTextColumn Header="Queue" Binding="{Binding Queue}" />
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                                        <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" />
+                                        <DataGridTextColumn Header="Open Date" Binding="{Binding OpenDate}" />
+                                        <DataGridTextColumn Header="Due Date" Binding="{Binding DueDate}" />
+                                        <DataGridTextColumn Header="Product" Binding="{Binding Product}" />
+                                        <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate}" />
+                                        <DataGridTextColumn Header="Date Assign To" Binding="{Binding DateAssignTo}" />
+                                        <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" />
+                                        <DataGridTextColumn Header="Attributes" Binding="{Binding Attribute}" />
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+                                        <DataGridTextColumn Header="Event Summary" Binding="{Binding EventSummary}" />
+                                        <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" />
+                                        <!--<DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="50"  />-->
+                                    </DataGrid.Columns>
+                                    <DataGrid.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Generar Comentario"
+                                       Command="{Binding SendMessageCommand}"
+                                      CommandParameter="{Binding SelectedItem}">
+                                                <MenuItem.Icon>
+                                                    <md:PackIcon Kind="File" Width="16" Height="16" HorizontalAlignment="Stretch" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </DataGrid.ContextMenu>
+                                </DataGrid>
+
+                            </StackPanel>
+                        </Border>
+
+
+
+                    </ge:ResponsiveGrid>
+                </md:Card>
+
+            </ScrollViewer>
+
+            <!--<Button
+         Margin="0 0 50 35"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Bottom"
+         Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
+        ToolTip="MaterialDesignFloatingActionButton"
+             Command="{x:Static md:DialogHost.OpenDialogCommand}">
+                <md:PackIcon
+       Width="30"
+       Height="30"
+       Kind="FilterSettingsOutline" />
+            </Button>-->
+
+            <md:Card   
+         Opacity="0.8"
+         Visibility="{Binding IsLoading,Mode=TwoWay,Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+
+                    <ProgressBar
+ Margin="0 100 0 0"
+IsIndeterminate="True"
+Width="50"
+Height="50"
+Style="{StaticResource MaterialDesignCircularProgressBar}"
+Value="50" />
+                    <TextBlock Text="Cargando..." />
+                </StackPanel>
+
+            </md:Card>
+
+
+
+
+        </Grid>
+
+        <md:DialogHost.DialogContent>
+
+            <GroupBox
+         Margin="0"
+         Padding="15"
+             Width="500"
+             Height="500"
+           Header="Filtors avanzados">
+                <StackPanel>
+                    <TextBlock
+            Text="My Content" />
+
+                    <Button Grid.Row="5"
+          Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                  Margin="5" VerticalAlignment="Center" >Cerrar</Button>
+                </StackPanel>
+
+
+
+            </GroupBox>
+
+
+        </md:DialogHost.DialogContent>
+    </md:DialogHost>
+
+
+
 </UserControl>
