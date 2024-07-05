@@ -20,8 +20,8 @@ namespace Gerencia_Reportes.Views.Windows
             InitializeComponent();
 
             _service = new EpicorProvider();
-            //localStorate = new MessagesProvider();
-            //UpdateTheme();
+            localStorate = new MessagesProvider();
+       
 
         }
 

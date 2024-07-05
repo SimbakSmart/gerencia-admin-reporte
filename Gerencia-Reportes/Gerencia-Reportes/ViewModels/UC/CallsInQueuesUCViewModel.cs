@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -391,9 +390,6 @@ namespace Gerencia_Reportes.ViewModels.UC
             try
             {
                 IsLoading = false;
-                //await LoadDataAsync(string.Empty);
-                //ClearFilters();
-
 
                 //Search By Queue 
                 var selectedQueues = QueuesFilter.Where(q => q.IsSelected).Select(q => q.Name).ToArray();
@@ -602,103 +598,103 @@ namespace Gerencia_Reportes.ViewModels.UC
 
 
 
-        private async void SendMessageAsync(CallsInQueues queue)
-        {
+        //private async void SendMessageAsync(CallsInQueues queue)
+        //{
 
-            try
-            {
-                //var queryIdPara = $"  ParentID='{id}' ";
-                //var list = await service.FetchAttributesAsync(queryIdPara);
+        //    try
+        //    {
+        //        //var queryIdPara = $"  ParentID='{id}' ";
+        //        //var list = await service.FetchAttributesAsync(queryIdPara);
 
-                //var dialog = new AttributeDialog(list);
+        //        //var dialog = new AttributeDialog(list);
 
-                //await MaterialDesignThemes.Wpf.DialogHost.Show(dialog);
-                //NotifiactionHelper
-                //   .SetMessage("Información", "La búsqueda se ha realizado con éxito.",
-                //           NotificationType.Success);
+        //        //await MaterialDesignThemes.Wpf.DialogHost.Show(dialog);
+        //        //NotifiactionHelper
+        //        //   .SetMessage("Información", "La búsqueda se ha realizado con éxito.",
+        //        //           NotificationType.Success);
 
-                // var dialogContent = new StackPanel();
-                //var dialogContent = new StackPanel();
+        //        // var dialogContent = new StackPanel();
+        //        //var dialogContent = new StackPanel();
 
-                //var dialogTextBlock = new TextBlock
-                //{
-                //    Text = dialogViewModel.DialogText,
-                //    Margin = new Thickness(20)
-                //};
+        //        //var dialogTextBlock = new TextBlock
+        //        //{
+        //        //    Text = dialogViewModel.DialogText,
+        //        //    Margin = new Thickness(20)
+        //        //};
 
-                //var closeBtn = new Button
-                //{
-                //    Content = "Cerrar",
-                //    Command = dialogViewModel.CloseCommand,
-                //    Margin = new Thickness(10)
-                //};
+        //        //var closeBtn = new Button
+        //        //{
+        //        //    Content = "Cerrar",
+        //        //    Command = dialogViewModel.CloseCommand,
+        //        //    Margin = new Thickness(10)
+        //        //};
 
-                //dialogContent.Children.Add(dialogTextBlock);
-                //dialogContent.Children.Add(closeBtn);
+        //        //dialogContent.Children.Add(dialogTextBlock);
+        //        //dialogContent.Children.Add(closeBtn);
 
-                //await DialogHost.Show(dialogContent, "RootDialog");
-
-
-                //var dialogContent = new StackPanel();
-
-                //var dialogTextBlock = new TextBlock
-                //{
-                //    Text = "Dynamic Dialog!",
-                //    Margin = new Thickness(20)
-                //};
-
-                //var closeBtn = new Button
-                //{
-                //    Content = "Cerrar",
-                //    Command = DialogHost.CloseDialogCommand,
-                //    CommandParameter = null,
-                //    Margin = new Thickness(10)
-                //};
-
-                ////var registerBtn = new Button
-                ////{
-                ////    Content = "Registrar Información",
-                ////    Command = new RelayCommand(null),
-                ////    Margin = new Thickness(10)
-                ////};
-
-                //dialogContent.Children.Add(dialogTextBlock);
-                //dialogContent.Children.Add(closeBtn);
-                ////dialogContent.Children.Add(registerBtn);
-
-                //await MaterialDesignThemes.Wpf.DialogHost.Show(dialogContent);
-
-                //MessageBox.Show(queue.Number.ToString());
-            }
-            catch (Exception ex)
-            {
-
-                Debug.WriteLine(ex.Message.ToString());
-                NotifiactionMessage
-                    .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
-            }
+        //        //await DialogHost.Show(dialogContent, "RootDialog");
 
 
-        }
+        //        //var dialogContent = new StackPanel();
 
-        private void OpenDynamicDialog(object parameter)
-        {
-            var queue = parameter as CallsInQueues;
-            if (queue != null)
-            {
-                // Aquí puedes realizar cualquier lógica necesaria antes de abrir el diálogo dinámico
+        //        //var dialogTextBlock = new TextBlock
+        //        //{
+        //        //    Text = "Dynamic Dialog!",
+        //        //    Margin = new Thickness(20)
+        //        //};
 
-                // Por ejemplo, asignando el texto dinámico
-                var dialogViewModel = new CallsInQueuesUCViewModel
-                {
-                    // DialogText = "Dynamic Dialog! " + queue.Number.ToString()
-                };
+        //        //var closeBtn = new Button
+        //        //{
+        //        //    Content = "Cerrar",
+        //        //    Command = DialogHost.CloseDialogCommand,
+        //        //    CommandParameter = null,
+        //        //    Margin = new Thickness(10)
+        //        //};
 
-                // Ahora, abre el diálogo utilizando el DialogHost de la vista
-                // Puedes utilizar un Messenger o similar para comunicarte con la vista
-                Messenger.Default.Send(new NotificationMessage(dialogViewModel, "OpenDynamicDialog"));
-            }
-        }
+        //        ////var registerBtn = new Button
+        //        ////{
+        //        ////    Content = "Registrar Información",
+        //        ////    Command = new RelayCommand(null),
+        //        ////    Margin = new Thickness(10)
+        //        ////};
+
+        //        //dialogContent.Children.Add(dialogTextBlock);
+        //        //dialogContent.Children.Add(closeBtn);
+        //        ////dialogContent.Children.Add(registerBtn);
+
+        //        //await MaterialDesignThemes.Wpf.DialogHost.Show(dialogContent);
+
+        //        //MessageBox.Show(queue.Number.ToString());
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        Debug.WriteLine(ex.Message.ToString());
+        //        NotifiactionMessage
+        //            .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
+        //    }
+
+
+        //}
+
+        //private void OpenDynamicDialog(object parameter)
+        //{
+        //    var queue = parameter as CallsInQueues;
+        //    if (queue != null)
+        //    {
+        //        // Aquí puedes realizar cualquier lógica necesaria antes de abrir el diálogo dinámico
+
+        //        // Por ejemplo, asignando el texto dinámico
+        //        var dialogViewModel = new CallsInQueuesUCViewModel
+        //        {
+        //            // DialogText = "Dynamic Dialog! " + queue.Number.ToString()
+        //        };
+
+        //        // Ahora, abre el diálogo utilizando el DialogHost de la vista
+        //        // Puedes utilizar un Messenger o similar para comunicarte con la vista
+        //        Messenger.Default.Send(new NotificationMessage(dialogViewModel, "OpenDynamicDialog"));
+        //    }
+        //}
 
 
 
