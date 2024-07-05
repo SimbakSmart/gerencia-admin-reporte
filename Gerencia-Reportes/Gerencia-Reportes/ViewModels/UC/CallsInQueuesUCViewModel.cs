@@ -239,6 +239,9 @@ namespace Gerencia_Reportes.ViewModels.UC
         public ICommand OpenDialogCommand { get; private set; }
         public ICommand SendCommentCommand { get; private set; }
 
+        public ICommand DeleteCommentCommand { get; private set; }
+        public ICommand UpdateCommentCommand { get; private set; }
+
 
         public CallsInQueuesUCViewModel()
         {
@@ -259,6 +262,8 @@ namespace Gerencia_Reportes.ViewModels.UC
 
             OpenDialogCommand = new RelayCommand<CallsInQueues>(OpenDialog);
             SendCommentCommand = new RelayCommand(SendComment);
+            DeleteCommentCommand = new RelayCommand(DeleteComment);
+            UpdateCommentCommand = new RelayCommand(UpdateComment);
 
             Task.Run(async () =>
             {
@@ -619,7 +624,7 @@ namespace Gerencia_Reportes.ViewModels.UC
                 saveFileDialog.Title = "Guardar archivo Excel";
                 saveFileDialog.FileName = $"Reporte SupportCall In Queues- {fechaFormateada}";
 
-                bool? result = saveFileDialog.ShowDialog(); // Mostrar el cuadro de diálogo
+                bool? result = saveFileDialog.ShowDialog(); 
 
                 if (result == true)
                 {
@@ -751,6 +756,17 @@ namespace Gerencia_Reportes.ViewModels.UC
 
         private void SendComment() 
         {
+
+
+            if (string.IsNullOrEmpty(Comments) ||
+                    string.IsNullOrWhiteSpace(Comments))
+            {
+                NotifiactionMessage
+                .SetMessage("No Valido", "Es necesario ingresar un  comentario",
+                           NotificationType.Error);
+                return;
+            }
+
             try
             {
                 var _messages = new Messages
@@ -762,7 +778,9 @@ namespace Gerencia_Reportes.ViewModels.UC
                 };
 
                 var passValue = SelectedItem;
-                localStorate.Insert(_messages);
+                int index = ItemList.IndexOf(SelectedItem);
+
+               
 
                 
                  ItemList.Remove(SelectedItem);
@@ -770,7 +788,11 @@ namespace Gerencia_Reportes.ViewModels.UC
                 var newValue = passValue;
                 newValue.Comments = Comments;
 
-                 ItemList.Add(newValue);
+                ItemList.Insert(index, newValue);
+
+                // ItemList.Add(newValue);
+
+                localStorate.Insert(_messages);
                 IsDialogOpen = false;
 
                 NotifiactionMessage
@@ -785,6 +807,86 @@ namespace Gerencia_Reportes.ViewModels.UC
             }
         }
 
+
+        private void DeleteComment()
+        {
+            try
+            {
+                var _delete = new Messages
+                {
+                    Attribute = Attribute,
+                    Value = Value,
+                    Number = Number,
+                };
+
+                var passValue = SelectedItem;
+                int index = ItemList.IndexOf(SelectedItem);
+
+                ItemList.Remove(SelectedItem);
+                var newValue = passValue;
+                newValue.Comments = string.Empty;
+                ItemList.Insert(index, newValue);
+                localStorate.Delete(_delete);
+                IsDialogOpen = false;
+
+                NotifiactionMessage
+                 .SetMessage("Información", "El comentario  ha sido eliminado con éxito.",
+                         NotificationType.Success);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                NotifiactionMessage
+                    .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
+            }
+        }
+
+        private void UpdateComment()
+        {
+
+
+            if (string.IsNullOrEmpty(Comments) ||
+                    string.IsNullOrWhiteSpace(Comments))
+            {
+                NotifiactionMessage
+                .SetMessage("No Valido", "Es necesario ingresar un  comentario",
+                           NotificationType.Error);
+                return;
+            }
+
+            try
+            {
+                var _messages = new Messages
+                {
+                    Attribute = Attribute,
+                    Value = Value,
+                    Number = Number,
+                    Comments = Comments.Trim(),
+                };
+
+                var passValue = SelectedItem;
+                int index = ItemList.IndexOf(SelectedItem);
+
+                ItemList.Remove(SelectedItem);
+                var newValue = passValue;
+                newValue.Comments = Comments;
+
+                ItemList.Insert(index, newValue);
+
+                localStorate.Update(_messages);
+                IsDialogOpen = false;
+
+                NotifiactionMessage
+                 .SetMessage("Información", "El comentario  ha sido actualizado con éxito.",
+                         NotificationType.Success);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                NotifiactionMessage
+                    .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
+            }
+        }
 
     }
 }

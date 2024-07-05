@@ -17,50 +17,7 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Style x:Key="MaterialDesignOutlinedRedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
-            <Setter Property="Background" Value="#FFEBEE"/>
-            <!-- Cambia el color de fondo a rojo -->
-            <Setter Property="BorderBrush" Value="#FFCDD2"/>
-            <!-- Cambia el color del borde a rojo más oscuro -->
-            <Setter Property="Foreground" Value="White"/>
-            <!-- Cambia el color del texto a blanco -->
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="10 5"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="2"
-                        SnapsToDevicePixels="true">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      Margin="{TemplateBinding Padding}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFCDD2"/>
-                                <!-- Cambia el color de fondo cuando el mouse está sobre el botón -->
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#E57373"/>
-                                <!-- Cambia el color de fondo cuando el botón está presionado -->
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
-                                <!-- Cambia la opacidad del botón cuando está deshabilitado -->
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+      
     </UserControl.Resources>
 
   
@@ -204,12 +161,13 @@
 
                         </Border>
 
-
+                        <!--AlternatingRowBackground="#ff7043"-->
                         <Border ge:ResponsiveGrid.XS="12"  ge:ResponsiveGrid.SM="12"  Margin="0 15">
                             <StackPanel Margin="5">
                                 <DataGrid ItemsSource="{Binding ItemList}"  
                                        SelectedItem="{Binding SelectedItem}"
                                   AutoGenerateColumns="False" 
+                                  
                                    Height="855"
                                    HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Stretch"
@@ -314,23 +272,6 @@ Value="50" />
 
                     <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 13">
 
-
-                        <!--<Button 
-                          Command="{Binding  SearchByCombinationCommand}" 
-                         Style="{StaticResource MaterialDesignOutlinedDarkButton}"
-                         ToolTip="Busqueda combinada"
-                         HorizontalAlignment="Center"
-                           
-                         Margin="5">
-                            <StackPanel Orientation="Horizontal">
-                                <md:PackIcon Kind="CloseBold" Width="25" Height="25" />
-                                <TextBlock
-                              Style="{StaticResource MaterialDesignBody1TextBlock}"
-                              Text="Cerrar" />
-                            </StackPanel>
-                           
-                        </Button>-->
-
                         <Button
                             Command="{x:Static md:DialogHost.CloseDialogCommand}"
                             ToolTip="Cerrar ventana"
@@ -347,7 +288,8 @@ Value="50" />
 
                        
                         <Button
-                             Visibility="{Binding IsEditMode}"
+                        Command="{Binding DeleteCommentCommand}"
+                      Visibility="{Binding IsEditMode}"
                      ToolTip="Búsqueda combinada"
                      HorizontalAlignment="Center"
                      Margin="5"
@@ -361,6 +303,7 @@ Value="50" />
                         </Button>
 
                         <Button
+                            Command="{Binding UpdateCommentCommand}"
                              Visibility="{Binding IsEditMode}"
                          ToolTip="Búsqueda combinada"
                          HorizontalAlignment="Center"
@@ -373,7 +316,7 @@ Value="50" />
                                 Text=" Actualizar"/>
                             </StackPanel>
                         </Button>
-                        
+
 
                         <Button
                           Command="{Binding SendCommentCommand}"
@@ -389,16 +332,6 @@ Value="50" />
                           Text=" Guardar"/>
                             </StackPanel>
                         </Button>
-
-
-
-                        <!--<Button 
-                      Command="{x:Static md:DialogHost.CloseDialogCommand}"
-                      Margin="5" VerticalAlignment="Center" >Cerrar</Button>
-
-                        <Button 
-                        Command="{Binding SendCommentCommand}"
-                        Margin="5" VerticalAlignment="Center" >Guardar</Button>-->
 
                     </StackPanel>
 

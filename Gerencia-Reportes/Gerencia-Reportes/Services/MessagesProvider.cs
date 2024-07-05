@@ -63,29 +63,19 @@ namespace Gerencia_Reportes.Services
             dbHelper.CloseConnection();
         }
 
-        //public void Update(Messages message)
-        //{
-        //    dbHelper.OpenConnection();
-        //    SQLiteCommand cmd = dbHelper.GetConnection().CreateCommand();
-        //    cmd.CommandText = "UPDATE Messages SET Attribute = @Attribute, Value = @Value, Number = @Number, Comments = @Comments WHERE Id = @Id";
-        //    cmd.Parameters.AddWithValue("@Attribute", message.Attribute);
-        //    cmd.Parameters.AddWithValue("@Value", message.Value);
-        //    cmd.Parameters.AddWithValue("@Number", message.Number);
-        //    cmd.Parameters.AddWithValue("@Comments", message.Comments);
-        //    cmd.Parameters.AddWithValue("@Id", message.Id);
-        //    cmd.ExecuteNonQuery();
-        //    dbHelper.CloseConnection();
-        //}
-
-        //public void Delete(int messageId)
-        //{
-        //    dbHelper.OpenConnection();
-        //    SQLiteCommand cmd = dbHelper.GetConnection().CreateCommand();
-        //    cmd.CommandText = "DELETE FROM Messages WHERE Id = @Id";
-        //    cmd.Parameters.AddWithValue("@Id", messageId);
-        //    cmd.ExecuteNonQuery();
-        //    dbHelper.CloseConnection();
-        //}
+        public void  Update(Messages message)
+        {
+            dbHelper.OpenConnection();
+            SQLiteCommand cmd = dbHelper.GetConnection().CreateCommand();
+            cmd.CommandText = "UPDATE Messages SET  Comments = @Comments " +
+                                               "  WHERE Number = @Number  AND Attribute = @Attribute AND Value = @Value";
+            cmd.Parameters.AddWithValue("@Attribute", message.Attribute);
+            cmd.Parameters.AddWithValue("@Value", message.Value);
+            cmd.Parameters.AddWithValue("@Number", message.Number);
+            cmd.Parameters.AddWithValue("@Comments", message.Comments);
+            cmd.ExecuteNonQuery();
+            dbHelper.CloseConnection();
+        }
 
     }
 }
