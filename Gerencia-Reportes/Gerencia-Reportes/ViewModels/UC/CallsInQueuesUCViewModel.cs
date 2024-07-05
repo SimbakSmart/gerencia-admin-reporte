@@ -3,10 +3,10 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using Gerencia_Reportes.Helpers;
 using Gerencia_Reportes.Interfaces;
 using Gerencia_Reportes.Models;
+using Gerencia_Reportes.Models.Sqlite;
 using Gerencia_Reportes.Services;
 using Gerencia_Reportes.Utils;
 using Microsoft.Win32;
@@ -20,6 +20,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Gerencia_Reportes.ViewModels.UC
@@ -27,7 +28,7 @@ namespace Gerencia_Reportes.ViewModels.UC
     public class CallsInQueuesUCViewModel : ViewModelBase
     {
         private IEpicorProvider service;
-       // private MessagesRepository localStorate;
+        private MessagesProvider localStorate;
 
         private List<CallsInQueues> list;
 
@@ -82,6 +83,21 @@ namespace Gerencia_Reportes.ViewModels.UC
                 RaisePropertyChanged(nameof(IsLoading));
             }
         }
+
+        private bool isDialogOpen;
+
+        public bool IsDialogOpen
+        {
+            get { return isDialogOpen; ;}
+
+            set
+            {
+                isDialogOpen = value;
+                RaisePropertyChanged(nameof(IsDialogOpen));
+            }
+        }
+
+      
 
 
 
@@ -141,6 +157,76 @@ namespace Gerencia_Reportes.ViewModels.UC
         }
 
 
+        private string comments;
+
+        public string Comments
+        {
+            get { return comments; }
+
+            set
+            {
+                comments = value;
+                RaisePropertyChanged(nameof(Comments));
+            }
+        }
+
+
+        private Visibility isEditMode;
+
+        public Visibility IsEditMode
+        {
+            get { return isEditMode; }
+
+            set
+            {
+                isEditMode = value;
+                RaisePropertyChanged(nameof(IsEditMode));
+            }
+        }
+
+        private int editWidth;
+
+        public int EditWidth
+        {
+            get { return editWidth; }
+
+            set
+            {
+                editWidth = value;
+                RaisePropertyChanged(nameof(EditWidth));
+            }
+        }
+
+
+        private Visibility isNotEditMode;
+
+        public Visibility IsNotEditMode
+        {
+            get { return isNotEditMode; }
+
+            set
+            {
+                isNotEditMode = value;
+                RaisePropertyChanged(nameof(IsNotEditMode));
+            }
+        }
+
+        private int isNotWidth;
+
+        public int IsNotWidth
+        {
+            get { return isNotWidth;  }
+
+            set
+            {
+                isNotWidth= value;
+                RaisePropertyChanged(nameof(IsNotWidth));
+            }
+        }
+
+
+
+
         public ICommand SearchCommand { get; private set; }
         public RelayCommand<KeyEventArgs> SearchByNumberKeyDownCommand { get; private set; }
         public RelayCommand<KeyEventArgs> SearchByValueKeyDownCommand { get; private set; }
@@ -148,20 +234,19 @@ namespace Gerencia_Reportes.ViewModels.UC
         public RelayCommand<KeyEventArgs> SearchByAttributeKeyDownCommand { get; private set; }
 
         public ICommand SearchByCombinationCommand { get; private set; }
-
         public ICommand ExcelReportCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
+        public ICommand OpenDialogCommand { get; private set; }
+        public ICommand SendCommentCommand { get; private set; }
 
-        //public ICommand SendMessageCommand { get; private set; }
-
-        //public ICommand OpenDynamicDialogCommand { get; }
 
         public CallsInQueuesUCViewModel()
         {
+
             IsLoading = false;
             TotalRecords = 0;
             service = new EpicorProvider();
-            //localStorate = new MessagesRepository();
+            localStorate = new MessagesProvider();
             list = new List<CallsInQueues>();
 
             SearchCommand = new AsyncRelayCommand(SearchAsync);
@@ -171,9 +256,9 @@ namespace Gerencia_Reportes.ViewModels.UC
             SearchByCombinationCommand = new AsyncRelayCommand(SearchByCombinationAsync);
             ExcelReportCommand = new RelayCommand(ExcelReport);
             RefreshCommand = new AsyncRelayCommand(RefrehAsync);
-            // SendMessageCommand = new RelayCommand<CallsInQueues>(SendMessageAsync);
 
-            ///SearchByCombinationAsync
+            OpenDialogCommand = new RelayCommand<CallsInQueues>(OpenDialog);
+            SendCommentCommand = new RelayCommand(SendComment);
 
             Task.Run(async () =>
             {
@@ -225,10 +310,38 @@ namespace Gerencia_Reportes.ViewModels.UC
 
 
                 if (list != null)
-                { 
+                {
+                    var listSqlite = localStorate.GetAll();
+
+                     var result = from SqlServer in list
+                                 join Sqlite in listSqlite
+                                 on new { SqlServer.Number, SqlServer.Value, SqlServer.Attribute }
+                                 equals new { Sqlite.Number, Sqlite.Value, Sqlite.Attribute }
+                                 into joined
+                                 from Sqlite in joined.DefaultIfEmpty()
+                                 select new CallsInQueues
+                                 {
+                                     Number = SqlServer.Number,
+                                     Types = SqlServer.Types,
+                                     Summary = SqlServer.Summary,
+                                     Queue = SqlServer.Queue,
+                                     Status = SqlServer.Status,
+                                     Priority = SqlServer.Priority,
+                                     OpenDate = SqlServer.OpenDate,
+                                     DueDate = SqlServer.DueDate,
+                                     Product = SqlServer.Product,
+                                     StartDate = SqlServer.StartDate,
+                                     DateAssignTo = SqlServer.DateAssignTo,
+
+                                     Attribute = SqlServer.Attribute,
+                                     Value = SqlServer.Value,
+                                     EventSummary = SqlServer.EventSummary,
+                                     Detail = SqlServer.Detail,
+                                     Comments = Sqlite != null ? Sqlite.Comments : null
+                                 };
 
                     TotalRecords = list.Count;
-                    ItemList = new ObservableCollection<CallsInQueues>(list);
+                    ItemList = new ObservableCollection<CallsInQueues>(result);
                 }
 
             }
@@ -386,7 +499,7 @@ namespace Gerencia_Reportes.ViewModels.UC
 
         public async Task SearchByCombinationAsync()
         {
-              string query=string.Empty;
+            string query = string.Empty;
             try
             {
                 IsLoading = false;
@@ -407,16 +520,16 @@ namespace Gerencia_Reportes.ViewModels.UC
                 }
 
 
-                    if (string.IsNullOrEmpty(sb.ToString()) 
-                    && (string.IsNullOrEmpty(SearchByNumber) || string.IsNullOrWhiteSpace(SearchByNumber))
-                    && (string.IsNullOrEmpty(ValueShortText) || string.IsNullOrWhiteSpace(ValueShortText))
-                    && (string.IsNullOrEmpty(SearchByAttribute) || string.IsNullOrWhiteSpace(SearchByAttribute)))
-                    {
-                        NotifiactionMessage
-                        .SetMessage("No Valido", "Es necesario ingresar un valor de busqueda",
-                                   NotificationType.Error);
-                        return;
-                    }
+                if (string.IsNullOrEmpty(sb.ToString())
+                && (string.IsNullOrEmpty(SearchByNumber) || string.IsNullOrWhiteSpace(SearchByNumber))
+                && (string.IsNullOrEmpty(ValueShortText) || string.IsNullOrWhiteSpace(ValueShortText))
+                && (string.IsNullOrEmpty(SearchByAttribute) || string.IsNullOrWhiteSpace(SearchByAttribute)))
+                {
+                    NotifiactionMessage
+                    .SetMessage("No Valido", "Es necesario ingresar un valor de busqueda",
+                               NotificationType.Error);
+                    return;
+                }
 
 
                 if (!string.IsNullOrEmpty(sb.ToString()))
@@ -438,11 +551,11 @@ namespace Gerencia_Reportes.ViewModels.UC
                 }
 
 
-                if (!string.IsNullOrEmpty(SearchByAttribute) )
+                if (!string.IsNullOrEmpty(SearchByAttribute))
                 {
                     query += $"  AND Ac.LabelText  LIKE '%{SearchByAttribute}%'";
                 }
-        
+
                 await LoadDataAsync(query);
 
                 NotifiactionMessage
@@ -486,7 +599,7 @@ namespace Gerencia_Reportes.ViewModels.UC
             }
         }
 
-       
+
 
 
 
@@ -593,112 +706,85 @@ namespace Gerencia_Reportes.ViewModels.UC
         }
 
 
+        private string Attribute = string.Empty;
+        private string Value = string.Empty;
+        private int Number = 0;
+        private void OpenDialog(CallsInQueues queue)
+        {
+            Attribute = string.Empty;
+            Value = string.Empty;
+            Number = 0;
+            Comments= string.Empty;
+           
+
+            var row = queue;
 
 
+            if (row != null) 
+            {
+                Attribute = row.Attribute;
+                Value = row.Value;
+                Number = row.Number;
+                Comments = row.Comments;
+                IsDialogOpen = true;
 
+                if (string.IsNullOrEmpty(Comments))
+                {
+                    IsEditMode = Visibility.Hidden;
+                    EditWidth = 0;
 
+                    IsNotEditMode=Visibility.Visible;
+                    IsNotWidth= 125;
+                }
+                else 
+                {
+                    IsEditMode = Visibility.Visible;
+                    EditWidth = 125;
 
-        //private async void SendMessageAsync(CallsInQueues queue)
-        //{
+                    IsNotEditMode = Visibility.Hidden;
+                    IsNotWidth = 0;
+                }
 
-        //    try
-        //    {
-        //        //var queryIdPara = $"  ParentID='{id}' ";
-        //        //var list = await service.FetchAttributesAsync(queryIdPara);
+            }
+            
+        }
 
-        //        //var dialog = new AttributeDialog(list);
+        private void SendComment() 
+        {
+            try
+            {
+                var _messages = new Messages
+                {
+                    Attribute= Attribute,
+                    Value= Value,
+                    Number= Number,
+                    Comments= Comments.Trim(),
+                };
 
-        //        //await MaterialDesignThemes.Wpf.DialogHost.Show(dialog);
-        //        //NotifiactionHelper
-        //        //   .SetMessage("Información", "La búsqueda se ha realizado con éxito.",
-        //        //           NotificationType.Success);
+                var passValue = SelectedItem;
+                localStorate.Insert(_messages);
 
-        //        // var dialogContent = new StackPanel();
-        //        //var dialogContent = new StackPanel();
+                
+                 ItemList.Remove(SelectedItem);
 
-        //        //var dialogTextBlock = new TextBlock
-        //        //{
-        //        //    Text = dialogViewModel.DialogText,
-        //        //    Margin = new Thickness(20)
-        //        //};
+                var newValue = passValue;
+                newValue.Comments = Comments;
 
-        //        //var closeBtn = new Button
-        //        //{
-        //        //    Content = "Cerrar",
-        //        //    Command = dialogViewModel.CloseCommand,
-        //        //    Margin = new Thickness(10)
-        //        //};
+                 ItemList.Add(newValue);
+                IsDialogOpen = false;
 
-        //        //dialogContent.Children.Add(dialogTextBlock);
-        //        //dialogContent.Children.Add(closeBtn);
+                NotifiactionMessage
+                 .SetMessage("Información", "El comentario  ha sido generado con éxito.",
+                         NotificationType.Success);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                NotifiactionMessage
+                    .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
+            }
+        }
 
-        //        //await DialogHost.Show(dialogContent, "RootDialog");
-
-
-        //        //var dialogContent = new StackPanel();
-
-        //        //var dialogTextBlock = new TextBlock
-        //        //{
-        //        //    Text = "Dynamic Dialog!",
-        //        //    Margin = new Thickness(20)
-        //        //};
-
-        //        //var closeBtn = new Button
-        //        //{
-        //        //    Content = "Cerrar",
-        //        //    Command = DialogHost.CloseDialogCommand,
-        //        //    CommandParameter = null,
-        //        //    Margin = new Thickness(10)
-        //        //};
-
-        //        ////var registerBtn = new Button
-        //        ////{
-        //        ////    Content = "Registrar Información",
-        //        ////    Command = new RelayCommand(null),
-        //        ////    Margin = new Thickness(10)
-        //        ////};
-
-        //        //dialogContent.Children.Add(dialogTextBlock);
-        //        //dialogContent.Children.Add(closeBtn);
-        //        ////dialogContent.Children.Add(registerBtn);
-
-        //        //await MaterialDesignThemes.Wpf.DialogHost.Show(dialogContent);
-
-        //        //MessageBox.Show(queue.Number.ToString());
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        Debug.WriteLine(ex.Message.ToString());
-        //        NotifiactionMessage
-        //            .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
-        //    }
-
-
-        //}
-
-        //private void OpenDynamicDialog(object parameter)
-        //{
-        //    var queue = parameter as CallsInQueues;
-        //    if (queue != null)
-        //    {
-        //        // Aquí puedes realizar cualquier lógica necesaria antes de abrir el diálogo dinámico
-
-        //        // Por ejemplo, asignando el texto dinámico
-        //        var dialogViewModel = new CallsInQueuesUCViewModel
-        //        {
-        //            // DialogText = "Dynamic Dialog! " + queue.Number.ToString()
-        //        };
-
-        //        // Ahora, abre el diálogo utilizando el DialogHost de la vista
-        //        // Puedes utilizar un Messenger o similar para comunicarte con la vista
-        //        Messenger.Default.Send(new NotificationMessage(dialogViewModel, "OpenDynamicDialog"));
-        //    }
-        //}
-
-
-
-       
 
     }
 }

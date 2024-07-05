@@ -16,8 +16,55 @@
         <vm:CallsInQueuesUCViewModel/>
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <Style x:Key="MaterialDesignOutlinedRedButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+            <Setter Property="Background" Value="#FFEBEE"/>
+            <!-- Cambia el color de fondo a rojo -->
+            <Setter Property="BorderBrush" Value="#FFCDD2"/>
+            <!-- Cambia el color del borde a rojo más oscuro -->
+            <Setter Property="Foreground" Value="White"/>
+            <!-- Cambia el color del texto a blanco -->
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="2"
+                        SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFCDD2"/>
+                                <!-- Cambia el color de fondo cuando el mouse está sobre el botón -->
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E57373"/>
+                                <!-- Cambia el color de fondo cuando el botón está presionado -->
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                                <!-- Cambia la opacidad del botón cuando está deshabilitado -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
-    <md:DialogHost>
+  
+    <md:DialogHost IsOpen="{Binding IsDialogOpen}" CloseOnClickAway="True" >
         <Grid>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -194,13 +241,14 @@
                                         <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" />
                                        
                                         <DataGridTextColumn Header="Event Summary" Binding="{Binding EventSummary}" />
-                                        <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" />
-                                        <!--<DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="50"  />-->
+                                        <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="250"  />
+                                        <DataGridTextColumn Header="Comments" Binding="{Binding Comments}"  Width="300"/>
+                                     
                                     </DataGrid.Columns>
                                     <DataGrid.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Generar Comentario"
-                                       Command="{Binding SendMessageCommand}"
+                                       Command="{Binding  OpenDialogCommand}"
                                       CommandParameter="{Binding SelectedItem}">
                                                 <MenuItem.Icon>
                                                     <md:PackIcon Kind="File" Width="16" Height="16" HorizontalAlignment="Stretch" />
@@ -220,18 +268,6 @@
 
             </ScrollViewer>
 
-            <!--<Button
-         Margin="0 0 50 35"
-         HorizontalAlignment="Right"
-         VerticalAlignment="Bottom"
-         Style="{StaticResource MaterialDesignFloatingActionDarkButton}"
-        ToolTip="MaterialDesignFloatingActionButton"
-             Command="{x:Static md:DialogHost.OpenDialogCommand}">
-                <md:PackIcon
-       Width="30"
-       Height="30"
-       Kind="FilterSettingsOutline" />
-            </Button>-->
 
             <md:Card   
          Opacity="0.8"
@@ -258,26 +294,119 @@ Value="50" />
 
         <md:DialogHost.DialogContent>
 
-            <GroupBox
-         Margin="0"
-         Padding="15"
-             Width="500"
-             Height="500"
-           Header="Filtors avanzados">
-                <StackPanel>
-                    <TextBlock
-            Text="My Content" />
+            <md:Card Padding="10" Margin="15"
+             md:ElevationAssist.Elevation="Dp4">
 
-                    <Button Grid.Row="5"
-          Command="{x:Static md:DialogHost.CloseDialogCommand}"
-                  Margin="5" VerticalAlignment="Center" >Cerrar</Button>
+                <StackPanel>
+
+
+                    <TextBox
+                    Text="{Binding Comments}"
+                  Height="80"
+                  MinWidth="280"
+                  Width="600"    
+                  MaxLength="255"
+                  Padding="6"
+                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                 VerticalAlignment="Stretch"
+                  TextWrapping="Wrap"
+                   VerticalScrollBarVisibility="Auto" />
+
+                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 13">
+
+
+                        <!--<Button 
+                          Command="{Binding  SearchByCombinationCommand}" 
+                         Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                         ToolTip="Busqueda combinada"
+                         HorizontalAlignment="Center"
+                           
+                         Margin="5">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="CloseBold" Width="25" Height="25" />
+                                <TextBlock
+                              Style="{StaticResource MaterialDesignBody1TextBlock}"
+                              Text="Cerrar" />
+                            </StackPanel>
+                           
+                        </Button>-->
+
+                        <Button
+                            Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                            ToolTip="Cerrar ventana"
+                            HorizontalAlignment="Center"
+                            Margin="5"
+                            Width="125"
+                             Style="{StaticResource MaterialDesignRaisedSecondaryDarkButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="CloseBold" Width="25" Height="25"/>
+                                <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
+                              Text="Cerrar"/>
+                            </StackPanel>
+                        </Button>
+
+                       
+                        <Button
+                             Visibility="{Binding IsEditMode}"
+                     ToolTip="Búsqueda combinada"
+                     HorizontalAlignment="Center"
+                     Margin="5"
+                      Width="{Binding EditWidth}"
+                         Style="{StaticResource  MaterialDesignRaisedSecondaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="TrashCan" Width="25" Height="25"/>
+                                <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
+                         Text="Eliminar"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button
+                             Visibility="{Binding IsEditMode}"
+                         ToolTip="Búsqueda combinada"
+                         HorizontalAlignment="Center"
+                         Margin="5"
+                           Width="{Binding EditWidth}"
+                           Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="TextBoxEditOutline" Width="25" Height="25"/>
+                                <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                Text=" Actualizar"/>
+                            </StackPanel>
+                        </Button>
+                        
+
+                        <Button
+                          Command="{Binding SendCommentCommand}"
+                             Visibility="{Binding IsNotEditMode}"
+                         ToolTip="Búsqueda combinada"
+                         HorizontalAlignment="Center"
+                         Margin="5"
+                          Width="{Binding IsNotWidth}"
+                          Style="{StaticResource MaterialDesignRaisedDarkButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <md:PackIcon Kind="Send" Width="25" Height="25"/>
+                                <TextBlock Style="{StaticResource MaterialDesignBody1TextBlock}"
+                          Text=" Guardar"/>
+                            </StackPanel>
+                        </Button>
+
+
+
+                        <!--<Button 
+                      Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                      Margin="5" VerticalAlignment="Center" >Cerrar</Button>
+
+                        <Button 
+                        Command="{Binding SendCommentCommand}"
+                        Margin="5" VerticalAlignment="Center" >Guardar</Button>-->
+
+                    </StackPanel>
+
                 </StackPanel>
 
 
 
-            </GroupBox>
-
-
+            </md:Card>
         </md:DialogHost.DialogContent>
     </md:DialogHost>
 

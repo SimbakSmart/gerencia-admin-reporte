@@ -13,7 +13,7 @@ namespace Gerencia_Reportes.Services
 
         public MessagesProvider()
         {
-            dbHelper = new SQLiteDb(@"C:\Local\messages.sqlite");
+            dbHelper = new SQLiteDb(@"C:\LocalMensajes\messages.sqlite");
         }
 
         public void Insert(Messages message)
