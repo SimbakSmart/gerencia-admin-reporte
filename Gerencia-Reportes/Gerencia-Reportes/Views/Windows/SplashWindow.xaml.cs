@@ -16,11 +16,13 @@ namespace Gerencia_Reportes.Views.Windows
         private MessagesProvider localStorate;
         public SplashWindow()
         {
+          
             InitializeComponent();
 
             _service = new EpicorProvider();
-            localStorate = new MessagesProvider();
-            UpdateTheme();
+            //localStorate = new MessagesProvider();
+            //UpdateTheme();
+
         }
 
         private void Window_ContentRendered(object sender, System.EventArgs e)
@@ -30,6 +32,7 @@ namespace Gerencia_Reportes.Views.Windows
             worker.DoWork += worker_DoWork;
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.RunWorkerAsync();
+            UpdateTheme();
         }
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {

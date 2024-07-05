@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gerencia-Reportes", "Gerencia-Reportes\Gerencia-Reportes.csproj", "{03C5570C-A0BB-4BED-A721-741725C6E443}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Report Epicor Installer", "Report Epicor Installer\Report Epicor Installer.vdproj", "{3022FB5D-E122-428C-AB0A-E29559F07077}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{03C5570C-A0BB-4BED-A721-741725C6E443}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03C5570C-A0BB-4BED-A721-741725C6E443}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03C5570C-A0BB-4BED-A721-741725C6E443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3022FB5D-E122-428C-AB0A-E29559F07077}.Debug|Any CPU.ActiveCfg = Debug
+		{3022FB5D-E122-428C-AB0A-E29559F07077}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

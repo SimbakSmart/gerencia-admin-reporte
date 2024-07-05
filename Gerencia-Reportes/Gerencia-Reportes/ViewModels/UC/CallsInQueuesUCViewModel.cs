@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -147,12 +148,14 @@ namespace Gerencia_Reportes.ViewModels.UC
 
         public RelayCommand<KeyEventArgs> SearchByAttributeKeyDownCommand { get; private set; }
 
+        public ICommand SearchByCombinationCommand { get; private set; }
+
         public ICommand ExcelReportCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
 
-        public ICommand SendMessageCommand { get; private set; }
+        //public ICommand SendMessageCommand { get; private set; }
 
-        public ICommand OpenDynamicDialogCommand { get; }
+        //public ICommand OpenDynamicDialogCommand { get; }
 
         public CallsInQueuesUCViewModel()
         {
@@ -166,9 +169,12 @@ namespace Gerencia_Reportes.ViewModels.UC
             SearchByNumberKeyDownCommand = new RelayCommand<KeyEventArgs>(SearchByNumberKeyDown);
             SearchByValueKeyDownCommand = new RelayCommand<KeyEventArgs>(SearchByValueKeyDown);
             SearchByAttributeKeyDownCommand = new RelayCommand<KeyEventArgs>(SearchByAttriabuteKeyDown);
+            SearchByCombinationCommand = new AsyncRelayCommand(SearchByCombinationAsync);
             ExcelReportCommand = new RelayCommand(ExcelReport);
             RefreshCommand = new AsyncRelayCommand(RefrehAsync);
-            SendMessageCommand = new RelayCommand<CallsInQueues>(SendMessageAsync);
+            // SendMessageCommand = new RelayCommand<CallsInQueues>(SendMessageAsync);
+
+            ///SearchByCombinationAsync
 
             Task.Run(async () =>
             {
@@ -379,11 +385,93 @@ namespace Gerencia_Reportes.ViewModels.UC
         }
 
 
+        public async Task SearchByCombinationAsync()
+        {
+              string query=string.Empty;
+            try
+            {
+                IsLoading = false;
+                //await LoadDataAsync(string.Empty);
+                //ClearFilters();
+
+
+                //Search By Queue 
+                var selectedQueues = QueuesFilter.Where(q => q.IsSelected).Select(q => q.Name).ToArray();
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < selectedQueues.Length; i++)
+                {
+                    sb.Append($"'{selectedQueues[i]}'");
+
+                    if (i < selectedQueues.Length - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+
+
+                    if (string.IsNullOrEmpty(sb.ToString()) 
+                    && (string.IsNullOrEmpty(SearchByNumber) || string.IsNullOrWhiteSpace(SearchByNumber))
+                    && (string.IsNullOrEmpty(ValueShortText) || string.IsNullOrWhiteSpace(ValueShortText))
+                    && (string.IsNullOrEmpty(SearchByAttribute) || string.IsNullOrWhiteSpace(SearchByAttribute)))
+                    {
+                        NotifiactionMessage
+                        .SetMessage("No Valido", "Es necesario ingresar un valor de busqueda",
+                                   NotificationType.Error);
+                        return;
+                    }
+
+
+                if (!string.IsNullOrEmpty(sb.ToString()))
+                {
+                    query = $"   AND  Que.Name IN ({sb})";
+                }
+
+                //Search By Queue Number
+
+                if (!string.IsNullOrEmpty(SearchByNumber))
+                {
+                    query += $"   AND Sc.Number LIKE '%{SearchByNumber}%'  ";
+                }
+
+                //Search By Value
+                if (!string.IsNullOrEmpty(ValueShortText))
+                {
+                    query += $"  AND Av.ValueShortText LIKE '%{ValueShortText}%' ";
+                }
+
+
+                if (!string.IsNullOrEmpty(SearchByAttribute) )
+                {
+                    query += $"  AND Ac.LabelText  LIKE '%{SearchByAttribute}%'";
+                }
+        
+                await LoadDataAsync(query);
+
+                NotifiactionMessage
+                   .SetMessage("Información", GlobalMessages.REFRESH,
+                       NotificationType.Information);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message.ToString());
+                NotifiactionMessage
+                    .SetMessage("Error", GlobalMessages.INTERNAL_SERVER_ERROR, NotificationType.Error);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+
         public async Task RefrehAsync()
         {
             try
             {
                 IsLoading = false;
+                await LoadFilters();
                 await LoadDataAsync(string.Empty);
                 ClearFilters();
                 NotifiactionMessage
@@ -401,6 +489,8 @@ namespace Gerencia_Reportes.ViewModels.UC
                 IsLoading = false;
             }
         }
+
+       
 
 
 
@@ -497,6 +587,19 @@ namespace Gerencia_Reportes.ViewModels.UC
                 IsLoading = false;
             }
         }
+
+
+        private void ClearFilters()
+        {
+            SearchByNumber = string.Empty;
+            ValueShortText = string.Empty;
+            SearchByAttribute = string.Empty;
+        }
+
+
+
+
+
 
 
         private async void SendMessageAsync(CallsInQueues queue)
@@ -599,13 +702,7 @@ namespace Gerencia_Reportes.ViewModels.UC
 
 
 
-        private void ClearFilters()
-        {
-            SearchByNumber = string.Empty;
-            ValueShortText = string.Empty;
-            SearchByAttribute = string.Empty;
-        }
-
+       
 
     }
 }

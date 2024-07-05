@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Gerencia_Reportes"
               xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             StartupUri="Views/Windows/MainWindow.xaml">
+             StartupUri="Views/Windows/SplashWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

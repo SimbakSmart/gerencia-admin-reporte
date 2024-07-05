@@ -114,7 +114,14 @@
                                 </TextBox>
 
 
-
+                                <Button 
+                                 Command="{Binding  SearchByCombinationCommand}" 
+                                Style="{StaticResource MaterialDesignOutlinedDarkButton}"
+                                ToolTip="Busqueda combinada"
+                                HorizontalAlignment="Center"
+                                Margin="5">
+                                    <md:PackIcon Kind="FilterSettingsOutline" Width="25" Height="25" />
+                                </Button>
 
                                 <Button 
                                Command="{Binding RefreshCommand}" 
@@ -173,6 +180,8 @@
                                         <DataGridTextColumn Header="Support Call ID" Binding="{Binding SupporCallID}" Visibility="Hidden" />
                                         <DataGridTextColumn Header="Number" Binding="{Binding Number}" />
                                         <DataGridTextColumn Header="Types" Binding="{Binding Types}" />
+                                        <DataGridTextColumn Header="Attributes" Binding="{Binding Attribute}" />
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
                                         <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" />
                                         <DataGridTextColumn Header="Queue" Binding="{Binding Queue}" />
                                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
@@ -183,8 +192,7 @@
                                         <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate}" />
                                         <DataGridTextColumn Header="Date Assign To" Binding="{Binding DateAssignTo}" />
                                         <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" />
-                                        <DataGridTextColumn Header="Attributes" Binding="{Binding Attribute}" />
-                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+                                       
                                         <DataGridTextColumn Header="Event Summary" Binding="{Binding EventSummary}" />
                                         <DataGridTextColumn Header="Comments" Binding="{Binding Comments}" />
                                         <!--<DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="50"  />-->
